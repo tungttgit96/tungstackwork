@@ -1,0 +1,19 @@
+# OS / Editor
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Runtime/cache
+*.log
+*.tmp
+
+# Secrets / local config
+.env
+.env.*
+
+# Python
+__pycache__/
+*.pyc
+
+# Deploy artifacts
+*.zip
