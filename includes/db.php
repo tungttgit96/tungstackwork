@@ -112,6 +112,30 @@ function initDB($pdo) {
     if ($count === 0) {
         seedData($pdo);
     }
+
+    migrateDefaultSettings($pdo);
+}
+
+function migrateDefaultSettings($pdo) {
+    // Keep legacy installs in sync with the new default contact email.
+    $stmt = $pdo->prepare("SELECT settings_value FROM settings WHERE settings_key = ?");
+    $stmt->execute(array('company_email'));
+    $currentEmail = $stmt->fetchColumn();
+
+    if ($currentEmail === false || $currentEmail === null || trim((string) $currentEmail) === '' || trim((string) $currentEmail) === 'admin@tungstack.work') {
+        upsertSetting($pdo, 'company_email', 'tungtt96@tungstack.work');
+    }
+}
+
+function upsertSetting($pdo, $key, $value) {
+    if (DB_TYPE === 'mysql') {
+        $stmt = $pdo->prepare("INSERT INTO settings (settings_key, settings_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE settings_value = VALUES(settings_value)");
+        $stmt->execute(array($key, $value));
+        return;
+    }
+
+    $stmt = $pdo->prepare("INSERT INTO settings (settings_key, settings_value) VALUES (?, ?) ON CONFLICT(settings_key) DO UPDATE SET settings_value = excluded.settings_value");
+    $stmt->execute(array($key, $value));
 }
 
 function seedData($pdo) {
@@ -308,4 +332,11 @@ function getDailyViews($year, $month) {
         $map[$r['view_date']] = (int)$r['views'];
     }
     return $map;
+}
+
+function getSetting($key, $default = '') {
+    $stmt = getDB()->prepare("SELECT settings_value FROM settings WHERE settings_key = ?");
+    $stmt->execute(array($key));
+    $value = $stmt->fetchColumn();
+    return ($value === false || $value === null || trim((string) $value) === '') ? $default : $value;
 }

@@ -4,7 +4,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
 <aside class="dashboard-sidebar">
     <a href="../index.php" class="sidebar-logo">
         <img src="../pictures/TSWlogo-web.svg" alt="Tungstack">
-        <span>Square</span>
+        <span>ADMIN</span>
     </a>
     
     <nav class="sidebar-nav">

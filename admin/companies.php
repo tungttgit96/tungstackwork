@@ -82,7 +82,7 @@ foreach($stmt->fetchAll() as $row) {
                             </div>
                             <div class="form-group">
                                 <label for="email">Địa chỉ Email</label>
-                                <input type="email" class="form-input" id="email" name="email" value="<?php echo e($settings['company_email'] ?? 'admin@tungstack.work'); ?>">
+                                <input type="email" class="form-input" id="email" name="email" value="<?php echo e($settings['company_email'] ?? 'tungtt96@tungstack.work'); ?>">
                             </div>
                         </div>
                         

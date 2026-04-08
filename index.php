@@ -8,6 +8,9 @@ recordPageView();
 
 $websites = getAllWebsites();
 $total = count($websites);
+$companyName = getSetting('company_name', 'Tungstack.work');
+$companyPhone = getSetting('company_phone', '+84975872497');
+$companyEmail = getSetting('company_email', 'tungtt96@tungstack.work');
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -15,7 +18,7 @@ $total = count($websites);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>tungstack.work - Demo Website Collection</title>
-    <meta name="description" content="tungstack.work - Demo Website Collection. Contact: Trần Thanh Tùng - 0975872497 - admin@tungstack.work">
+    <meta name="description" content="tungstack.work - Demo Website Collection. Contact: <?php echo e($companyName); ?> - <?php echo e($companyPhone); ?> - <?php echo e($companyEmail); ?>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
@@ -33,7 +36,6 @@ $total = count($websites);
             </a>
             <div class="navbar-links">
                 <a href="#demos" class="nav-link">Demos</a>
-                <a href="https://www.facebook.com/tungtt.3996" target="_blank" rel="noopener" class="nav-link">Contact</a>
                 <a href="admin/login.php" class="btn btn-outline btn-sm">⚙️ Admin</a>
             </div>
         </div>
@@ -49,13 +51,13 @@ $total = count($websites);
                 <p class="hero-subtitle"><?php echo $total; ?> professional demo websites for every industry</p>
                 <div class="hero-contact">
                     <a href="https://www.facebook.com/tungtt.3996" target="_blank" rel="noopener" class="contact-chip">
-                        <span class="chip-icon">👤</span> Trần Thanh Tùng
+                        <span class="chip-icon">👤</span> <?php echo e($companyName); ?>
                     </a>
-                    <a href="https://zalo.me/84975872497" target="_blank" rel="noopener" class="contact-chip">
-                        <span class="chip-icon">📱</span> +84975872497
+                    <a href="https://zalo.me/<?php echo e(preg_replace('/[^0-9]/', '', $companyPhone)); ?>" target="_blank" rel="noopener" class="contact-chip">
+                        <span class="chip-icon">📱</span> <?php echo e($companyPhone); ?>
                     </a>
-                    <a href="mailto:admin@tungstack.work" class="contact-chip">
-                        <span class="chip-icon">✉️</span> admin@tungstack.work
+                    <a href="mailto:<?php echo e($companyEmail); ?>" class="contact-chip">
+                        <span class="chip-icon">✉️</span> <?php echo e($companyEmail); ?>
                     </a>
                 </div>
             </div>
