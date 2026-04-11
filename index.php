@@ -8,9 +8,13 @@ recordPageView();
 
 $websites = getAllWebsites();
 $total = count($websites);
-$companyName = getSetting('company_name', 'Tungstack.work');
-$companyPhone = getSetting('company_phone', '+84975872497');
-$companyEmail = getSetting('company_email', 'tungtt96@tungstack.work');
+$companyProfile = getCompanyProfile();
+$companyName = $companyProfile['company_name'];
+$companyPhone = $companyProfile['company_phone'];
+$companyEmail = $companyProfile['company_email'];
+$companyFacebook = $companyProfile['company_facebook'];
+$zaloDigits = preg_replace('/[^0-9]/', '', (string) $companyPhone);
+$zaloHref = $zaloDigits !== '' ? ('https://zalo.me/' . $zaloDigits) : '#';
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -18,7 +22,7 @@ $companyEmail = getSetting('company_email', 'tungtt96@tungstack.work');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>tungstack.work - Demo Website Collection</title>
-    <meta name="description" content="tungstack.work - Demo Website Collection. Contact: <?php echo e($companyName); ?> - <?php echo e($companyPhone); ?> - <?php echo e($companyEmail); ?>">
+    <meta name="description" content="tungstack.work - Demo Website Collection. <?php echo e($companyName); ?> - <?php echo e($companyPhone); ?> - <?php echo e($companyEmail); ?>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
@@ -36,7 +40,7 @@ $companyEmail = getSetting('company_email', 'tungtt96@tungstack.work');
             </a>
             <div class="navbar-links">
                 <a href="#demos" class="nav-link">Demos</a>
-                <a href="admin/login.php" class="btn btn-outline btn-sm">⚙️ Admin</a>
+                <a href="admin/login.php" class="btn btn-outline btn-sm">⚙️ Dashboard</a>
             </div>
         </div>
     </nav>
@@ -50,10 +54,10 @@ $companyEmail = getSetting('company_email', 'tungtt96@tungstack.work');
                 <h1 class="hero-title">Demo Website <span class="gradient-text">Collection</span></h1>
                 <p class="hero-subtitle"><?php echo $total; ?> professional demo websites for every industry</p>
                 <div class="hero-contact">
-                    <a href="https://www.facebook.com/tungtt.3996" target="_blank" rel="noopener" class="contact-chip">
+                    <a href="<?php echo e($companyFacebook); ?>" target="_blank" rel="noopener" class="contact-chip">
                         <span class="chip-icon">👤</span> <?php echo e($companyName); ?>
                     </a>
-                    <a href="https://zalo.me/<?php echo e(preg_replace('/[^0-9]/', '', $companyPhone)); ?>" target="_blank" rel="noopener" class="contact-chip">
+                    <a href="<?php echo e($zaloHref); ?>" target="_blank" rel="noopener" class="contact-chip">
                         <span class="chip-icon">📱</span> <?php echo e($companyPhone); ?>
                     </a>
                     <a href="mailto:<?php echo e($companyEmail); ?>" class="contact-chip">

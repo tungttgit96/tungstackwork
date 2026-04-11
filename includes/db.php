@@ -11,6 +11,11 @@ define('DB_USER', 'root');
 define('DB_PASS', '');
 define('DB_CHARSET', 'utf8mb4');
 
+define('DEFAULT_COMPANY_NAME', 'Tungstack.work');
+define('DEFAULT_COMPANY_PHONE', '+84975872497');
+define('DEFAULT_COMPANY_EMAIL', 'tungtt96@tungstack.work');
+define('DEFAULT_COMPANY_FACEBOOK', 'https://www.facebook.com/tungtt.3996');
+
 function getDB() {
     static $pdo = null;
     if ($pdo === null) {
@@ -117,13 +122,22 @@ function initDB($pdo) {
 }
 
 function migrateDefaultSettings($pdo) {
-    // Keep legacy installs in sync with the new default contact email.
-    $stmt = $pdo->prepare("SELECT settings_value FROM settings WHERE settings_key = ?");
-    $stmt->execute(array('company_email'));
-    $currentEmail = $stmt->fetchColumn();
+    // Keep legacy installs in sync with latest default values.
+    if (trim((string) getSetting('company_name', '')) === '') {
+        upsertSetting($pdo, 'company_name', DEFAULT_COMPANY_NAME);
+    }
 
-    if ($currentEmail === false || $currentEmail === null || trim((string) $currentEmail) === '' || trim((string) $currentEmail) === 'admin@tungstack.work') {
-        upsertSetting($pdo, 'company_email', 'tungtt96@tungstack.work');
+    if (trim((string) getSetting('company_phone', '')) === '') {
+        upsertSetting($pdo, 'company_phone', DEFAULT_COMPANY_PHONE);
+    }
+
+    $currentEmail = trim((string) getSetting('company_email', ''));
+    if ($currentEmail === '' || $currentEmail === 'admin@tungstack.work') {
+        upsertSetting($pdo, 'company_email', DEFAULT_COMPANY_EMAIL);
+    }
+
+    if (trim((string) getSetting('company_facebook', '')) === '') {
+        upsertSetting($pdo, 'company_facebook', DEFAULT_COMPANY_FACEBOOK);
     }
 }
 
@@ -339,4 +353,27 @@ function getSetting($key, $default = '') {
     $stmt->execute(array($key));
     $value = $stmt->fetchColumn();
     return ($value === false || $value === null || trim((string) $value) === '') ? $default : $value;
+}
+
+function getCompanyProfile() {
+    return array(
+        'company_name' => getSetting('company_name', DEFAULT_COMPANY_NAME),
+        'company_phone' => getSetting('company_phone', DEFAULT_COMPANY_PHONE),
+        'company_email' => getSetting('company_email', DEFAULT_COMPANY_EMAIL),
+        'company_facebook' => getSetting('company_facebook', DEFAULT_COMPANY_FACEBOOK),
+    );
+}
+
+function updateCompanyProfile($companyName, $phone, $email, $facebookUrl = '') {
+    $pdo = getDB();
+
+    $normalizedName = trim((string) $companyName);
+    $normalizedPhone = trim((string) $phone);
+    $normalizedEmail = trim((string) $email);
+    $normalizedFacebookUrl = trim((string) $facebookUrl);
+
+    upsertSetting($pdo, 'company_name', $normalizedName);
+    upsertSetting($pdo, 'company_phone', $normalizedPhone);
+    upsertSetting($pdo, 'company_email', $normalizedEmail);
+    upsertSetting($pdo, 'company_facebook', $normalizedFacebookUrl);
 }

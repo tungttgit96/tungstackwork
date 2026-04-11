@@ -7,33 +7,18 @@ requireLogin();
 
 $flash = null;
 
-// Fake simple saving mechanism to Settings table
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $companyName = $_POST['company_name'] ?? '';
     $phone = $_POST['phone'] ?? '';
     $email = $_POST['email'] ?? '';
-    
-    $pdo = getDB();
-    $stmt = $pdo->prepare("INSERT INTO settings (settings_key, settings_value) VALUES (?, ?) ON CONFLICT(settings_key) DO UPDATE SET settings_value = ?");
-    if(DB_TYPE == 'mysql') {
-        $stmt = $pdo->prepare("INSERT INTO settings (settings_key, settings_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE settings_value = ?");
-    }
-    
-    // Lưu các biến
-    $stmt->execute(['company_name', $companyName, $companyName]);
-    $stmt->execute(['company_phone', $phone, $phone]);
-    $stmt->execute(['company_email', $email, $email]);
+    $facebookUrl = $_POST['facebook_url'] ?? '';
+
+    updateCompanyProfile($companyName, $phone, $email, $facebookUrl);
     
     $flash = ['type' => 'success', 'message' => 'Lưu hồ sơ thành công!'];
 }
 
-// Load current data
-$pdo = getDB();
-$stmt = $pdo->query("SELECT settings_key, settings_value FROM settings WHERE settings_key LIKE 'company_%'");
-$settings = [];
-foreach($stmt->fetchAll() as $row) {
-    $settings[$row['settings_key']] = $row['settings_value'];
-}
+$settings = getCompanyProfile();
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -73,17 +58,21 @@ foreach($stmt->fetchAll() as $row) {
                     <form method="POST" class="edit-form">
                         <div class="form-group">
                             <label for="company_name">Tên Công Ty / Agency hiển thị</label>
-                            <input type="text" class="form-input" id="company_name" name="company_name" value="<?php echo e($settings['company_name'] ?? 'Tungstack.work'); ?>">
+                            <input type="text" class="form-input" id="company_name" name="company_name" value="<?php echo e($settings['company_name']); ?>">
                         </div>
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="phone">Số lượng điện thoại Zalo</label>
-                                <input type="text" class="form-input" id="phone" name="phone" value="<?php echo e($settings['company_phone'] ?? '+84975872497'); ?>">
+                                <input type="text" class="form-input" id="phone" name="phone" value="<?php echo e($settings['company_phone']); ?>">
                             </div>
                             <div class="form-group">
                                 <label for="email">Địa chỉ Email</label>
-                                <input type="email" class="form-input" id="email" name="email" value="<?php echo e($settings['company_email'] ?? 'tungtt96@tungstack.work'); ?>">
+                                <input type="email" class="form-input" id="email" name="email" value="<?php echo e($settings['company_email']); ?>">
                             </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="facebook_url">Link Facebook</label>
+                            <input type="url" class="form-input" id="facebook_url" name="facebook_url" value="<?php echo e($settings['company_facebook'] ?? ''); ?>" placeholder="https://www.facebook.com/your-profile">
                         </div>
                         
                         <div class="form-actions">
